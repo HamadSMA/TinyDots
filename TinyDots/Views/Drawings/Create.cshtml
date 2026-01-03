@@ -1,0 +1,18 @@
+@{
+    ViewData["Title"] = "Create Drawing";
+}
+
+<h1>Create Drawing</h1>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <label>Pixel Data (temporary)</label><br />
+    <textarea name="pixelData" rows="5" cols="40">
+[[1,0,1],[0,1,0]]
+    </textarea>
+
+    <br /><br />
+
+    <button type="submit">Save Drawing</button>
+</form>

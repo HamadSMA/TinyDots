@@ -1,0 +1,19 @@
+@model List<TinyDots.Models.Drawing>
+
+<h1>Drawings</h1>
+
+@if (!Model.Any())
+{
+    <p>No drawings yet.</p>
+}
+else
+{
+    <ul>
+        @foreach (var drawing in Model)
+        {
+            <li>
+                Drawing #@drawing.Id — Created @drawing.CreatedAt
+            </li>
+        }
+    </ul>
+}
