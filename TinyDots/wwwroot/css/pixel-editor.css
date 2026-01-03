@@ -1,0 +1,17 @@
+#grid {
+  display: grid;
+  grid-template-columns: repeat(8, 30px);
+  gap: 4px;
+}
+
+.pixel {
+  width: 30px;
+  height: 30px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.pixel.active {
+  background-color: #222;
+}

@@ -4,15 +4,17 @@
 
 <h1>Create Drawing</h1>
 
-<form method="post">
+<form method="post" id="drawingForm">
     @Html.AntiForgeryToken()
 
-    <label>Pixel Data (temporary)</label><br />
-    <textarea name="pixelData" rows="5" cols="40">
-[[1,0,1],[0,1,0]]
-    </textarea>
+    <input type="hidden" name="pixelData" id="pixelData" />
 
-    <br /><br />
+    <div id="grid"></div>
+
+    <br />
 
     <button type="submit">Save Drawing</button>
 </form>
+
+<script src="/js/pixel-editor.js"></script>
+<link rel="stylesheet" href="/css/pixel-editor.css" />
