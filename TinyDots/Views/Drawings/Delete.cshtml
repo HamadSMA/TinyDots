@@ -1,0 +1,17 @@
+@model TinyDots.Models.Drawing
+
+<h1>Delete Drawing</h1>
+
+<p>
+    Are you sure you want to delete
+    <strong>Drawing #@Model.Id</strong>?
+</p>
+
+<form method="post" asp-action="DeleteConfirmed">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="id" value="@Model.Id" />
+
+    <button type="submit">Yes, delete</button>
+    <a href="/Drawings">Cancel</a>
+</form>

@@ -12,7 +12,13 @@ else
         @foreach (var drawing in Model)
         {
             <li>
-                Drawing #@drawing.Id — Created @drawing.CreatedAt
+                Drawing #@drawing.Id - Created @drawing.CreatedAt
+                |
+                <a href="/Drawings/Details/@drawing.Id">View</a>
+                |
+                <a href="Drawings/Edit/@drawing.Id">Edit</a>
+                |
+                <a href="/Drawings/Delete/@drawing.Id">Delete</a>
             </li>
         }
     </ul>

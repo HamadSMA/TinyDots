@@ -1,0 +1,21 @@
+@model TinyDots.Models.Drawing
+
+<h1>Edit Drawing</h1>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="pixelData" id="pixelData" />
+
+    <div id="grid"></div>
+
+    <br />
+    <button type="submit">Save Changes</button>
+</form>
+
+<script>
+    const initialPixelData = JSON.parse('@Model.PixelData');
+</script>
+
+<script src="/js/pixel-editor-edit.js"></script>
+<link rel="stylesheet" href="/css/pixel-editor.css" />

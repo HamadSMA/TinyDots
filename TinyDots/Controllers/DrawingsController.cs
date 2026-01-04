@@ -47,5 +47,81 @@ namespace TinyDots.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult Details(int id)
+        {
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+
+            if (drawing == null)
+            {
+                return NotFound();
+            }
+            return View(drawing);
+        }
+
+        // GET: /Drawings/Edit/5
+        public IActionResult Edit(int id)
+        {
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+
+            if (drawing == null)
+            {
+                return NotFound();
+            }
+            return View(drawing);
+        }
+
+        //POST: /Drwaings/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(int id, string pixelData)
+        {
+
+            if (string.IsNullOrWhiteSpace(pixelData))
+            {
+                ModelState.AddModelError("", "Pixel data is missing.");
+                return RedirectToAction(nameof(Edit), new { id });
+            }
+
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+
+            if (drawing == null)
+            {
+                return NotFound();
+            }
+            drawing.PixelData = pixelData;
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //GET: /Drawings/Delete/5
+        public IActionResult Delete(int id)
+        {
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+            if (drawing == null)
+            {
+                return NotFound();
+            }
+            return View(drawing);
+        }
+
+        // POST: /Drawings/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+
+            if (drawing == null)
+            {
+                return NotFound();
+            }
+
+            _context.Drawings.Remove(drawing);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

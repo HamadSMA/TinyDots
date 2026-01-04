@@ -1,0 +1,11 @@
+@model TinyDots.Models.Drawing
+
+<h1>View Drawings</h1>
+<div id="grid"></div>
+
+<script>
+    const pixelData = @Html.Raw(Model.PixelData);
+</script>
+
+<script src="/js/pixel-viewer.js"></script>
+<link rel="stylesheet" href="/css/pixel-editor.css">
