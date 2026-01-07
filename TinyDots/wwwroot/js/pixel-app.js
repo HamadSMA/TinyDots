@@ -6,6 +6,10 @@ let pixels = []
 let activeDrawingId = null
 let isDrawing = false
 
+function getCellSize() {
+  return Math.floor(320 / gridSize)
+}
+
 // ---------- GRID ----------
 function buildEmptyGrid() {
   pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(0))
@@ -21,13 +25,21 @@ document.getElementById("gridSizeSelect").addEventListener("change", (e) => {
 
 function renderGrid() {
   grid.innerHTML = ""
-  grid.style.display = "grid" // 🔑 add this
-  grid.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`
+
+  const cellSize = getCellSize()
+
+  grid.style.display = "grid"
+  grid.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`
+  grid.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`
 
   pixels.forEach((row, y) => {
     row.forEach((value, x) => {
       const pixel = document.createElement("div")
       pixel.classList.add("pixel")
+
+      pixel.style.width = `${cellSize}px`
+      pixel.style.height = `${cellSize}px`
+
       if (value === 1) pixel.classList.add("active")
 
       pixel.addEventListener("mousedown", () => {
@@ -36,23 +48,21 @@ function renderGrid() {
       })
 
       pixel.addEventListener("mouseover", () => {
-        if (isDrawing) {
-          togglePixel(x, y, pixel)
-        }
+        if (isDrawing) togglePixel(x, y, pixel)
       })
-
-      document.addEventListener("mouseup", () => {
-        isDrawing = false
-      })
-
-      function togglePixel(x, y, pixel) {
-        pixels[y][x] = pixels[y][x] === 0 ? 1 : 0
-        pixel.classList.toggle("active")
-      }
 
       grid.appendChild(pixel)
     })
   })
+}
+
+document.addEventListener("mouseup", () => {
+  isDrawing = false
+})
+
+function togglePixel(x, y, pixel) {
+  pixels[y][x] = pixels[y][x] === 0 ? 1 : 0
+  pixel.classList.toggle("active")
 }
 
 // ---------- LOAD ----------
