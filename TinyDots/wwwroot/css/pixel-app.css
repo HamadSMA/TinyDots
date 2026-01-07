@@ -1,0 +1,28 @@
+#app {
+  display: flex;
+  height: 80vh;
+  gap: 20px;
+}
+
+#sidebar {
+  width: 200px;
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+}
+
+#editor {
+  flex: 1;
+}
+
+#toolbar {
+  margin-bottom: 10px;
+}
+
+#toolbar button {
+  margin-right: 5px;
+}
+
+#grid {
+  display: grid;
+  gap: 4px;
+}

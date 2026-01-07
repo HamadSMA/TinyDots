@@ -123,5 +123,50 @@ namespace TinyDots.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public IActionResult Save([FromBody] SaveDrawingRequest request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.PixelData))
+            {
+                return BadRequest();
+            }
+
+            Drawing drawing;
+
+            if (request.Id.HasValue)
+            {
+                drawing = _context.Drawings.FirstOrDefault(d => d.Id == request.Id.Value);
+                if (drawing == null) return NotFound();
+                drawing.PixelData = request.PixelData;
+            }
+            else
+            {
+                drawing = new Drawing
+                {
+                    PixelData = request.PixelData,
+                    CreatedAt = DateTime.Now
+                };
+                _context.Drawings.Add(drawing);
+            }
+
+            _context.SaveChanges();
+
+            return Json(new { id = drawing.Id });
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteAjax([FromBody] int id)
+        {
+            var drawing = _context.Drawings.FirstOrDefault(d => d.Id == id);
+            if (drawing == null) return NotFound();
+
+            _context.Drawings.Remove(drawing);
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
+
     }
 }

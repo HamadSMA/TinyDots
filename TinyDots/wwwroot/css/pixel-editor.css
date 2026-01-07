@@ -10,6 +10,9 @@
   background-color: #eee;
   border: 1px solid #ccc;
   cursor: pointer;
+  .pixel {
+    user-select: none;
+  }
 }
 
 .pixel.active {

@@ -1,25 +1,43 @@
-@model List<TinyDots.Models.Drawing>
+<h1>TinyDots</h1>
 
-<h1>Drawings</h1>
+<div id="app">
+    <div id="sidebar">
+        <h3>Saved Drawings</h3>
+        <ul id="drawingList">
+            @foreach (var drawing in Model)
+            {
+                <li>
+                    <button class="load-btn" data-id="@drawing.Id" data-pixels='@Html.Raw(drawing.PixelData)'>
+                        Drawing #@drawing.Id
+                    </button>
+                </li>
+            }
+        </ul>
+    </div>
 
-@if (!Model.Any())
-{
-    <p>No drawings yet.</p>
-}
-else
-{
-    <ul>
-        @foreach (var drawing in Model)
-        {
-            <li>
-                Drawing #@drawing.Id - Created @drawing.CreatedAt
-                |
-                <a href="/Drawings/Details/@drawing.Id">View</a>
-                |
-                <a href="Drawings/Edit/@drawing.Id">Edit</a>
-                |
-                <a href="/Drawings/Delete/@drawing.Id">Delete</a>
-            </li>
-        }
-    </ul>
-}
+    <div id="editor">
+        <div id="toolbar">
+            <button id="newBtn">New</button>
+            <button id="saveBtn">Save</button>
+            <button id="deleteBtn" disabled>Delete</button>
+
+            <label style="margin-left:10px;">
+                Grid:
+                <select id="gridSizeSelect">
+                    <option value="8">8×8</option>
+                    <option value="16">16×16</option>
+                    <option value="24">24×24</option>
+                </select>
+            </label>
+        </div>
+
+
+        <input type="hidden" id="currentDrawingId" />
+
+        <div id="grid"></div>
+    </div>
+</div>
+
+<script src="/js/pixel-app.js"></script>
+<link rel="stylesheet" href="/css/pixel-app.css" />
+<link rel="stylesheet" href="/css/pixel-editor.css" />
