@@ -21,6 +21,15 @@
             <button id="saveBtn">Save</button>
             <button id="deleteBtn" disabled>Delete</button>
 
+            <div id="palette">
+                <input type="color" id="colorPicker" value="#000000" />
+
+                <button id="eraserBtn">Eraser</button>
+
+                <div id="colorHistory"></div>
+            </div>
+
+
             <label style="margin-left:10px;">
                 Grid:
                 <select id="gridSizeSelect">
@@ -39,5 +48,5 @@
 </div>
 
 <script src="/js/pixel-app.js"></script>
-<link rel="stylesheet" href="/css/pixel-app.css" />
 <link rel="stylesheet" href="/css/pixel-editor.css" />
+<link rel="stylesheet" href="/css/pixel-app.css" />

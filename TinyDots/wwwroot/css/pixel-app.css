@@ -26,3 +26,30 @@
   display: grid;
   gap: 4px;
 }
+
+#palette {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+}
+
+#colorHistory {
+  display: flex;
+  gap: 6px;
+  height: 28px;
+  min-height: 28px;
+  align-items: center;
+}
+
+.color-history-item {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #000;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.tool-active {
+  outline: 2px solid #000;
+}
