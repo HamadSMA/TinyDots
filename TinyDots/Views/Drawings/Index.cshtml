@@ -1,3 +1,5 @@
+@model List<TinyDots.Models.Drawing>
+
 <h1>TinyDots</h1>
 
 <div id="app">
@@ -6,10 +8,10 @@
         <ul id="drawingList">
             @foreach (var drawing in Model)
             {
-                <li>
-                    <button class="load-btn" data-id="@drawing.Id" data-pixels='@Html.Raw(drawing.PixelData)'>
-                        Drawing #@drawing.Id
-                    </button>
+                <li class="thumb-item">
+                    <canvas class="thumb-canvas" width="64" height="64" data-id="@drawing.Id"
+                        data-pixels='@Html.Raw(drawing.PixelData)'>
+                    </canvas>
                 </li>
             }
         </ul>
@@ -21,16 +23,7 @@
             <button id="saveBtn">Save</button>
             <button id="deleteBtn" disabled>Delete</button>
 
-            <div id="palette">
-                <input type="color" id="colorPicker" value="#000000" />
-
-                <button id="eraserBtn">Eraser</button>
-
-                <div id="colorHistory"></div>
-            </div>
-
-
-            <label style="margin-left:10px;">
+            <label>
                 Grid:
                 <select id="gridSizeSelect">
                     <option value="8">8×8</option>
@@ -38,15 +31,18 @@
                     <option value="24">24×24</option>
                 </select>
             </label>
+
+            <div id="palette">
+                <input type="color" id="colorPicker" value="#000000" />
+                <button id="eraserBtn">Eraser</button>
+                <div id="colorHistory"></div>
+            </div>
         </div>
-
-
-        <input type="hidden" id="currentDrawingId" />
 
         <div id="grid"></div>
     </div>
 </div>
 
-<script src="/js/pixel-app.js"></script>
 <link rel="stylesheet" href="/css/pixel-editor.css" />
 <link rel="stylesheet" href="/css/pixel-app.css" />
+<script src="/js/pixel-app.js"></script>

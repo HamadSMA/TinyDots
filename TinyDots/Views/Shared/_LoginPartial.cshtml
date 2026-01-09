@@ -1,0 +1,15 @@
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    <form method="post" asp-area="Identity" asp-page="/Account/Logout" style="display:inline">
+        <span>Hello @User.Identity.Name!</span>
+        <button type="submit">Logout</button>
+    </form>
+}
+else
+{
+    <a asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a asp-area="Identity" asp-page="/Account/Register">Register</a>
+}

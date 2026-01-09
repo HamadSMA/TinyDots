@@ -1,134 +1,63 @@
+// =======================
+// State
+// =======================
 let gridSize = 8
-const grid = document.getElementById("grid")
-const drawingIdInput = document.getElementById("currentDrawingId")
-const drawingList = document.getElementById("drawingList")
-
-const colorPicker = document.getElementById("colorPicker")
-const eraserBtn = document.getElementById("eraserBtn")
-const colorHistoryEl = document.getElementById("colorHistory")
-
-colorHistoryEl.style.display = "flex"
-colorHistoryEl.style.alignItems = "center"
-colorHistoryEl.style.height = "28px"
-colorHistoryEl.style.minHeight = "28px"
-colorHistoryEl.style.gap = "6px"
-
 let pixels = []
 let activeDrawingId = null
-let isDrawing = false
 
+let isDrawing = false
 let currentColor = "#000000"
 let isEraser = false
 let colorHistory = []
 
+// =======================
+// DOM Elements
+// =======================
+const grid = document.getElementById("grid")
+const drawingList = document.getElementById("drawingList")
+const colorPicker = document.getElementById("colorPicker")
+const eraserBtn = document.getElementById("eraserBtn")
+const colorHistoryEl = document.getElementById("colorHistory")
+
+const newBtn = document.getElementById("newBtn")
+const saveBtn = document.getElementById("saveBtn")
+const deleteBtn = document.getElementById("deleteBtn")
+const gridSizeSelect = document.getElementById("gridSizeSelect")
+
+// =======================
+// Color History Layout Lock
+// =======================
+colorHistoryEl.style.display = "flex"
+colorHistoryEl.style.height = "28px"
+colorHistoryEl.style.gap = "6px"
+
+// =======================
+// Grid Helpers
+// =======================
 function getCellSize() {
   return Math.floor(320 / gridSize)
 }
 
-// Color history
-function renderColorHistory() {
-  colorHistoryEl.innerHTML = ""
-
-  colorHistory.forEach((color) => {
-    const div = document.createElement("div")
-    div.className = "color-history-item"
-
-    div.style.backgroundColor = color
-    div.style.display = "block"
-
-    div.addEventListener("click", () => {
-      setColor(color)
-      colorPicker.value = color
-    })
-
-    colorHistoryEl.appendChild(div)
-  })
-}
-
-eraserBtn.addEventListener("click", () => {
-  isEraser = true
-  eraserBtn.classList.add("tool-active")
-})
-
-// Color selection
-function setColor(color) {
-  currentColor = color
-  isEraser = false
-  eraserBtn.classList.remove("tool-active")
-
-  // Update color history (max 5, unique)
-  if (!colorHistory.includes(color)) {
-    colorHistory.unshift(color)
-    if (colorHistory.length > 5) {
-      colorHistory.pop()
-    }
-    renderColorHistory()
-  }
-}
-
-colorPicker.addEventListener("input", (e) => {
-  setColor(e.target.value)
-})
-
-// Sidebar helpers
-function addDrawingToSidebar(id, pixelData) {
-  const li = document.createElement("li")
-
-  const btn = document.createElement("button")
-  btn.classList.add("load-btn")
-  btn.textContent = `Drawing #${id}`
-  btn.dataset.id = id
-  btn.dataset.pixels = pixelData
-
-  btn.addEventListener("click", () => {
-    pixels = JSON.parse(btn.dataset.pixels)
-    gridSize = pixels.length
-    renderGrid()
-    activeDrawingId = id
-    document.getElementById("deleteBtn").disabled = false
-  })
-
-  li.appendChild(btn)
-  drawingList.appendChild(li)
-}
-
-function removeDrawingFromSidebar(id) {
-  const btn = drawingList.querySelector(`button[data-id="${id}"]`)
-  if (btn) btn.parentElement.remove()
-}
-// ---------- GRID ----------
 function buildEmptyGrid() {
-  pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(0))
+  pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null))
   renderGrid()
 }
 
-document.getElementById("gridSizeSelect").addEventListener("change", (e) => {
-  gridSize = Number(e.target.value)
-  activeDrawingId = null
-  document.getElementById("deleteBtn").disabled = true
-  buildEmptyGrid()
-})
-
 function renderGrid() {
   grid.innerHTML = ""
+  const size = getCellSize()
 
-  const cellSize = getCellSize()
-
-  grid.style.display = "grid"
-  grid.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`
-  grid.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`
+  grid.style.gridTemplateColumns = `repeat(${gridSize}, ${size}px)`
+  grid.style.gridTemplateRows = `repeat(${gridSize}, ${size}px)`
 
   pixels.forEach((row, y) => {
     row.forEach((value, x) => {
       const pixel = document.createElement("div")
-      pixel.classList.add("pixel")
+      pixel.className = "pixel"
+      pixel.style.width = `${size}px`
+      pixel.style.height = `${size}px`
 
-      pixel.style.width = `${cellSize}px`
-      pixel.style.height = `${cellSize}px`
-
-      if (value) {
-        pixel.style.backgroundColor = value
-      }
+      if (value) pixel.style.backgroundColor = value
 
       pixel.addEventListener("mousedown", () => {
         isDrawing = true
@@ -148,55 +77,150 @@ document.addEventListener("mouseup", () => {
   isDrawing = false
 })
 
+// =======================
+// Drawing Tools
+// =======================
 function paintPixel(x, y, pixel) {
-  if (isEraser === true) {
+  if (isEraser) {
     pixels[y][x] = null
     pixel.style.backgroundColor = ""
-    return // 🔑 STOP HERE — DO NOT PAINT
+    return
+  }
+
+  // 🎨 First actual usage of color → register in history
+  if (!colorHistory.includes(currentColor)) {
+    colorHistory.unshift(currentColor)
+    if (colorHistory.length > 5) colorHistory.pop()
+    renderColorHistory()
   }
 
   pixels[y][x] = currentColor
   pixel.style.backgroundColor = currentColor
 }
 
-// function togglePixel(x, y, pixel) {
-//   pixels[y][x] = pixels[y][x] === 0 ? 1 : 0
-//   pixel.classList.toggle("active")
-// }
+// =======================
+// Color System
+// =======================
+function setColor(color) {
+  currentColor = color
+  isEraser = false
+  eraserBtn.classList.remove("tool-active")
+}
 
-// ---------- LOAD ----------
-document.querySelectorAll(".load-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    pixels = JSON.parse(btn.dataset.pixels)
-    activeDrawingId = btn.dataset.id
-    drawingIdInput.value = activeDrawingId
-    renderGrid()
-    document.getElementById("deleteBtn").disabled = false
+function renderColorHistory() {
+  colorHistoryEl.innerHTML = ""
+
+  colorHistory.forEach((color) => {
+    const div = document.createElement("div")
+    div.className = "color-history-item"
+    div.style.backgroundColor = color
+    div.onclick = () => {
+      setColor(color)
+      colorPicker.value = color
+    }
+    colorHistoryEl.appendChild(div)
   })
+}
+
+colorPicker.addEventListener("input", (e) => setColor(e.target.value))
+
+eraserBtn.addEventListener("click", () => {
+  isEraser = true
+  eraserBtn.classList.add("tool-active")
 })
 
-// ---------- TOOLBAR ----------
-document.getElementById("newBtn").addEventListener("click", () => {
+// =======================
+// New Button
+// =======================
+newBtn.onclick = () => {
   activeDrawingId = null
-  drawingIdInput.value = ""
-  document.getElementById("deleteBtn").disabled = true
+  deleteBtn.disabled = true
+  buildEmptyGrid()
+}
+
+// =======================
+// Grid Size
+// =======================
+gridSizeSelect.addEventListener("change", (e) => {
+  gridSize = Number(e.target.value)
+  activeDrawingId = null
+  deleteBtn.disabled = true
   buildEmptyGrid()
 })
 
-// Initial load
-buildEmptyGrid()
+// =======================
+// Thumbnail Helpers
+// =======================
+function drawThumbnail(canvas, data) {
+  const ctx = canvas.getContext("2d")
+  const size = data.length
+  const cell = canvas.width / size
 
-// Save logic
-document.getElementById("saveBtn").addEventListener("click", async () => {
-  const payload = {
-    id: activeDrawingId ? Number(activeDrawingId) : null,
-    pixelData: JSON.stringify(pixels),
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+  data.forEach((row, y) => {
+    row.forEach((color, x) => {
+      if (color) {
+        ctx.fillStyle = color
+        ctx.fillRect(x * cell, y * cell, cell, cell)
+      }
+    })
+  })
+}
+
+function createThumbnail(id, data) {
+  const li = document.createElement("li")
+  li.className = "thumb-item"
+
+  const canvas = document.createElement("canvas")
+  canvas.className = "thumb-canvas"
+  canvas.width = 64
+  canvas.height = 64
+  canvas.dataset.id = id
+
+  drawThumbnail(canvas, data)
+
+  canvas.onclick = () => {
+    pixels = JSON.parse(JSON.stringify(data))
+    gridSize = data.length
+    activeDrawingId = id
+    deleteBtn.disabled = false
+    renderGrid()
   }
 
+  li.appendChild(canvas)
+  drawingList.appendChild(li)
+  return canvas
+}
+
+// =======================
+// Initialize Existing Thumbnails
+// =======================
+document.querySelectorAll(".thumb-canvas").forEach((canvas) => {
+  const data = JSON.parse(canvas.dataset.pixels)
+  drawThumbnail(canvas, data)
+
+  canvas.onclick = () => {
+    pixels = JSON.parse(JSON.stringify(data))
+    gridSize = data.length
+    activeDrawingId = Number(canvas.dataset.id)
+    deleteBtn.disabled = false
+    renderGrid()
+  }
+})
+
+// =======================
+// Save
+// =======================
+saveBtn.onclick = async () => {
   const response = await fetch("/Drawings/Save", {
     method: "POST",
+    credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      id: activeDrawingId,
+      pixelData: JSON.stringify(pixels),
+    }),
   })
 
   if (!response.ok) {
@@ -204,41 +228,50 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     return
   }
 
-  const result = await response.json()
+  const data = await response.json()
 
-  if (!activeDrawingId) {
-    addDrawingToSidebar(result.id, payload.pixelData)
+  let thumb = document.querySelector(`.thumb-canvas[data-id="${data.id}"]`)
+
+  if (!thumb) {
+    thumb = createThumbnail(data.id, pixels)
   } else {
-    const btn = drawingList.querySelector(
-      `button[data-id="${activeDrawingId}"]`
-    )
-    if (btn) btn.dataset.pixels = payload.pixelData
+    drawThumbnail(thumb, pixels)
   }
 
-  activeDrawingId = result.id
-  document.getElementById("deleteBtn").disabled = false
-})
+  activeDrawingId = data.id
+  deleteBtn.disabled = false
+}
 
-// Delete logic
-document.getElementById("deleteBtn").addEventListener("click", async () => {
+// =======================
+// Delete
+// =======================
+deleteBtn.onclick = async () => {
   if (!activeDrawingId) return
-  if (!confirm("Delete this drawing?")) return
 
   const response = await fetch("/Drawings/DeleteAjax", {
     method: "POST",
+    credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(activeDrawingId),
   })
 
   if (!response.ok) {
-    alert("Delete failed")
+    alert("Failed to delete drawing")
     return
   }
 
-  removeDrawingFromSidebar(activeDrawingId)
-  activeDrawingId = null
-  document.getElementById("deleteBtn").disabled = true
-  buildEmptyGrid()
-})
+  const thumb = document.querySelector(
+    `.thumb-canvas[data-id="${activeDrawingId}"]`
+  )
 
-renderColorHistory()
+  if (thumb) thumb.parentElement.remove()
+
+  activeDrawingId = null
+  deleteBtn.disabled = true
+  buildEmptyGrid()
+}
+
+// =======================
+// Init
+// =======================
+buildEmptyGrid()
