@@ -1,6 +1,5 @@
 #grid {
   display: grid;
-  grid-template-columns: repeat(8, 30px);
   width: 640px;
   height: 640px;
   background-color: #f5f5f5;
@@ -13,9 +12,7 @@
   background-color: #eee;
   border: 1px solid #ccc;
   cursor: pointer;
-  .pixel {
-    user-select: none;
-  }
+  user-select: none;
 }
 
 .pixel.active {

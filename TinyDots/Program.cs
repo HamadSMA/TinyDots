@@ -33,6 +33,7 @@ builder.Services
 // --------------------
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 
 // --------------------
 // BUILD APP (NO SERVICES AFTER THIS)

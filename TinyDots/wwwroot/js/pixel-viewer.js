@@ -1,19 +1,24 @@
-const gridElement = document.getElementById("grid");
-const gridSize = pixelData.length;
+const gridElement = document.getElementById("grid")
 
-// gridElement.style.display = "grid";
-// gridElement.style.gridTemplateColumns = `repeat(${gridSize}, 30px)`;
-// gridElement.style.gap = "4px";
+if (gridElement && Array.isArray(pixelData)) {
+  const gridSize = pixelData.length
+  const fragment = document.createDocumentFragment()
 
-//Build grid from saved data
-pixelData.forEach((row, y) => {
-    row.forEach((value, x) =>{
-        const pixel = document.createElement("div");
-        pixel.classList.add("pixel");
+  gridElement.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`
+  gridElement.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`
 
-        if (value === 1){
-            pixel.classList.add("active");
-        }
-        gridElement.appendChild(pixel);
-    });
-});
+  pixelData.forEach((row) => {
+    row.forEach((value) => {
+      const pixel = document.createElement("div")
+      pixel.classList.add("pixel")
+
+      if (value) {
+        pixel.style.backgroundColor = value === 1 ? "#222" : value
+      }
+
+      fragment.appendChild(pixel)
+    })
+  })
+
+  gridElement.appendChild(fragment)
+}

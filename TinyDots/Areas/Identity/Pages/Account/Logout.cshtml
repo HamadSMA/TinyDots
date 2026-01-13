@@ -1,0 +1,22 @@
+@page
+@model TinyDots.Areas.Identity.Pages.Account.LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+}
+
+<link rel="stylesheet" href="/css/pixel-app.css" />
+<link rel="stylesheet" href="/css/auth.css" />
+
+<div class="auth-page">
+    <div class="auth-panel">
+        <div class="auth-logo">
+            <img class="brand-logo" src="/lib/Logo.png" alt="Pixelettuce logo" />
+        </div>
+        <div class="auth-title">Sign out</div>
+        <p class="auth-text">You are about to log out of Pixelettuce.</p>
+        <form method="post">
+            <button type="submit" class="auth-primary">Logout</button>
+            <a class="auth-link" asp-area="" asp-controller="Drawings" asp-action="Index">Back to editor</a>
+        </form>
+    </div>
+</div>

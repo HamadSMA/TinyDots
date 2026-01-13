@@ -1,0 +1,86 @@
+@page
+@model TinyDots.Areas.Identity.Pages.Account.LoginModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Login";
+}
+
+<link rel="stylesheet" href="/css/pixel-app.css" />
+<link rel="stylesheet" href="/css/auth.css" />
+
+<div class="auth-shell">
+    <header id="appHeader" class="auth-header">
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+                <img class="brand-logo" src="/lib/Logo.png" alt="Pixelettuce logo" />
+            </div>
+            <div>
+                <div class="brand-title">Pixelettuce</div>
+                <div class="brand-subtitle">Pixel playground</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="auth-page">
+        <div class="auth-panel">
+            <div class="auth-tabs" role="tablist">
+                <button type="button" class="auth-tab is-active" data-target="loginPanel" role="tab">Login</button>
+                <button type="button" class="auth-tab" data-target="registerPanel" role="tab">Register</button>
+            </div>
+
+            <div id="loginPanel" class="auth-panel-body is-active" role="tabpanel">
+                <form method="post" asp-page="/Account/Login">
+                    <div class="auth-field">
+                        <label asp-for="Input.Email">Email</label>
+                        <input asp-for="Input.Email" />
+                    </div>
+                    <div class="auth-field">
+                        <label asp-for="Input.Password">Password</label>
+                        <input asp-for="Input.Password" type="password" />
+                    </div>
+                    <label class="auth-remember">
+                        <input asp-for="Input.RememberMe" type="checkbox" />
+                        Remember me
+                    </label>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-primary">Login</button>
+                    </div>
+                    <div class="auth-validation" asp-validation-summary="All"></div>
+                </form>
+            </div>
+
+            <div id="registerPanel" class="auth-panel-body" role="tabpanel">
+                <form method="post" asp-page-handler="Register">
+                    <div class="auth-field">
+                        <label asp-for="RegisterInput.Email">Email</label>
+                        <input asp-for="RegisterInput.Email" />
+                    </div>
+                    <div class="auth-field">
+                        <label asp-for="RegisterInput.Password">Password</label>
+                        <input asp-for="RegisterInput.Password" type="password" />
+                    </div>
+                    <div class="auth-field">
+                        <label asp-for="RegisterInput.ConfirmPassword">Confirm Password</label>
+                        <input asp-for="RegisterInput.ConfirmPassword" type="password" />
+                    </div>
+                    <div class="auth-actions">
+                        <button type="submit" class="auth-primary">Register</button>
+                    </div>
+                    <div class="auth-validation" asp-validation-summary="All"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.querySelectorAll(".auth-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".auth-tab").forEach((btn) => btn.classList.remove("is-active"))
+      document.querySelectorAll(".auth-panel-body").forEach((panel) => panel.classList.remove("is-active"))
+      tab.classList.add("is-active")
+      const target = document.getElementById(tab.dataset.target)
+      if (target) target.classList.add("is-active")
+    })
+  })
+</script>

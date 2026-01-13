@@ -1,45 +1,122 @@
 @model List<TinyDots.Models.Drawing>
 
-<h1>TinyDots</h1>
-
 <div id="app">
-    <div id="sidebar">
-        <h3>Saved Drawings</h3>
-        <ul id="drawingList">
-            @foreach (var drawing in Model)
-            {
-                <li class="thumb-item">
-                    <canvas class="thumb-canvas" width="64" height="64" data-id="@drawing.Id"
-                        data-pixels='@Html.Raw(drawing.PixelData)'>
-                    </canvas>
-                </li>
-            }
-        </ul>
-    </div>
-
-    <div id="editor">
-        <div id="toolbar">
-            <button id="newBtn">New</button>
-            <button id="saveBtn">Save</button>
-            <button id="deleteBtn" disabled>Delete</button>
-
-            <label>
-                Grid:
-                <select id="gridSizeSelect">
-                    <option value="8">8×8</option>
-                    <option value="16">16×16</option>
-                    <option value="24">24×24</option>
-                </select>
-            </label>
-
-            <div id="palette">
-                <input type="color" id="colorPicker" value="#000000" />
-                <button id="eraserBtn">Eraser</button>
-                <div id="colorHistory"></div>
+    <header id="appHeader">
+        <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+                <img class="brand-logo" src="/lib/Logo.png" alt="Pixelettuce logo" />
+            </div>
+            <div>
+                <div class="brand-title">Pixelettuce</div>
+                <div class="brand-subtitle">Pixel playground</div>
             </div>
         </div>
+        <div class="user-actions">
+            <partial name="_LoginPartial" />
+        </div>
+    </header>
 
-        <div id="grid"></div>
+    <div id="appBody">
+        <aside id="tools">
+            <h3>Create</h3>
+
+            <div class="tool-section">
+                <div class="tool-label">Actions</div>
+                <div class="tool-actions">
+                    <button id="newBtn" type="button">New</button>
+                    <button id="saveBtn" type="button">Save</button>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <label class="tool-label" for="colorPicker">Color</label>
+                <input type="color" id="colorPicker" value="#000000" />
+            </div>
+
+            <div class="tool-section">
+                <div class="color-columns">
+                    <div class="color-column">
+                        <div class="color-column-title">Tints</div>
+                        <div id="colorTints"></div>
+                    </div>
+                    <div class="color-column">
+                        <div class="color-column-title">Shades</div>
+                        <div id="colorShades"></div>
+                    </div>
+                </div>
+                <div class="tool-label">Recent</div>
+                <div id="colorHistory"></div>
+            </div>
+
+            <div class="tool-section">
+                <button id="eraserBtn">Eraser</button>
+            </div>
+
+            <div class="tool-section">
+                <div class="tool-label">Grid Size</div>
+                <div class="grid-size-buttons">
+                    <button type="button" class="grid-size-btn" data-size="16">16×16</button>
+                    <button type="button" class="grid-size-btn" data-size="32">32×32</button>
+                    <button type="button" class="grid-size-btn" data-size="64">64×64</button>
+                    <button type="button" class="grid-size-btn" data-size="128">128×128</button>
+                </div>
+            </div>
+        </aside>
+
+        <main id="editor">
+            <div class="canvas-status">
+                <span>Grid <span id="statusGrid">--</span></span>
+                <span>•</span>
+                <span>Color <span id="statusColor" class="accent">--</span></span>
+                <span>•</span>
+                <span>Eraser <span id="statusEraser">Inactive</span></span>
+            </div>
+            <div class="ai-row">
+                <input id="aiPrompt" type="text" placeholder="Describe a pixel scene..." />
+                <button id="aiGenerateBtn" type="button">Generate</button>
+            </div>
+            <div class="ai-tools">
+                <button id="aiDownloadBtn" type="button">Export PNG</button>
+            </div>
+            <div class="grid-stage">
+                <div id="grid">
+                    <canvas id="gridCanvas"></canvas>
+                </div>
+            </div>
+        </main>
+
+        <aside id="sidebar">
+            <h3>Gallery</h3>
+            <div class="sidebar-hint">Tap a thumbnail to load</div>
+            <ul id="drawingList">
+                @foreach (var drawing in Model)
+                {
+                    <li class="thumb-item">
+                        <canvas class="thumb-canvas" width="64" height="64" data-id="@drawing.Id"
+                            data-pixels='@Html.Raw(drawing.PixelData)'>
+                        </canvas>
+                        <div class="thumb-actions">
+                            <button type="button" class="thumb-edit" data-id="@drawing.Id">Edit</button>
+                            <button type="button" class="thumb-delete" data-id="@drawing.Id" aria-label="Delete drawing">Delete</button>
+                        </div>
+                    </li>
+                }
+            </ul>
+            <div id="galleryFooter">
+                <button id="openGalleryBtn" type="button">View all drawings</button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<div id="galleryModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" data-close="true"></div>
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
+        <div class="modal-header">
+            <div id="galleryTitle">All drawings</div>
+            <button type="button" class="modal-close" data-close="true">Close</button>
+        </div>
+        <div id="galleryGrid" class="modal-grid"></div>
     </div>
 </div>
 
