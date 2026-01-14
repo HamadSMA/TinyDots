@@ -1,7 +1,7 @@
 // =======================
 // State
 // =======================
-let gridSize = 32
+let gridSize = 128
 let pixels = []
 let activeDrawingId = null
 
@@ -641,7 +641,7 @@ if (aiDownloadBtn) {
     const dataUrl = renderGridToDataUrl()
     const link = document.createElement("a")
     link.href = dataUrl
-    link.download = "pixelettuce.png"
+    link.download = "tiny-dots.png"
     document.body.appendChild(link)
     link.click()
     link.remove()

@@ -1,4 +1,4 @@
-const gridSize = 8
+const gridSize = 128
 const gridElement = document.getElementById("grid")
 const pixelDataInput = document.getElementById("pixelData")
 

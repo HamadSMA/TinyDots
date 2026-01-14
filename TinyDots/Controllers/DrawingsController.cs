@@ -15,11 +15,16 @@ namespace TinyDots.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<DrawingsController> _logger;
 
-        public DrawingsController(AppDbContext context, IHttpClientFactory httpClientFactory)
+        public DrawingsController(
+            AppDbContext context,
+            IHttpClientFactory httpClientFactory,
+            ILogger<DrawingsController> logger)
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         // =========================
@@ -141,16 +146,22 @@ namespace TinyDots.Controllers
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
+            var requestedSize = string.IsNullOrWhiteSpace(request.Size)
+                ? "1024x1024"
+                : request.Size;
+
             var payload = new
             {
-                model = "gpt-image-1",
+                model = "gpt-image-1.5",
                 prompt = request.Prompt,
-                size = "256x256",
-                response_format = "b64_json"
+                size = requestedSize
             };
 
+            var payloadJson = JsonSerializer.Serialize(payload);
+            _logger.LogInformation("OpenAI image payload: {Payload}", payloadJson);
+
             var content = new StringContent(
-                JsonSerializer.Serialize(payload),
+                payloadJson,
                 Encoding.UTF8,
                 "application/json"
             );
@@ -160,6 +171,7 @@ namespace TinyDots.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
+                _logger.LogError("OpenAI error response: {Response}", responseBody);
                 return StatusCode((int)response.StatusCode, responseBody);
             }
 
