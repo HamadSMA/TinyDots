@@ -66,14 +66,61 @@ function toHex(value) {
   return value.toString(16).padStart(2, "0")
 }
 
+function getOpaqueBounds(data, width, height) {
+  let minX = width
+  let minY = height
+  let maxX = -1
+  let maxY = -1
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const idx = (y * width + x) * 4 + 3
+      if (data[idx] === 0) continue
+      if (x < minX) minX = x
+      if (y < minY) minY = y
+      if (x > maxX) maxX = x
+      if (y > maxY) maxY = y
+    }
+  }
+
+  if (maxX === -1 || maxY === -1) return null
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX + 1,
+    height: maxY - minY + 1,
+  }
+}
+
 function applyImageToGrid(img) {
   if (!gridCanvas || !gridCtx) return
   const canvas = document.createElement("canvas")
-  canvas.width = gridSize
-  canvas.height = gridSize
+  canvas.width = img.naturalWidth || gridSize
+  canvas.height = img.naturalHeight || gridSize
   const ctx = canvas.getContext("2d")
   ctx.imageSmoothingEnabled = false
-  ctx.drawImage(img, 0, 0, gridSize, gridSize)
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  const bounds = getOpaqueBounds(imageData.data, canvas.width, canvas.height)
+  const sourceRect = bounds ?? {
+    x: 0,
+    y: 0,
+    width: canvas.width,
+    height: canvas.height,
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  ctx.drawImage(
+    img,
+    sourceRect.x,
+    sourceRect.y,
+    sourceRect.width,
+    sourceRect.height,
+    0,
+    0,
+    gridSize,
+    gridSize
+  )
   const data = ctx.getImageData(0, 0, gridSize, gridSize).data
 
   pixels = Array.from({ length: gridSize }, () => Array(gridSize).fill(null))
@@ -116,8 +163,15 @@ function applyImageToGrid(img) {
 
 function renderGridToDataUrl() {
   if (!gridCanvas || !gridCtx) return ""
+  const exportSize = 720
   renderGrid()
-  return gridCanvas.toDataURL("image/png")
+  const exportCanvas = document.createElement("canvas")
+  exportCanvas.width = exportSize
+  exportCanvas.height = exportSize
+  const exportCtx = exportCanvas.getContext("2d")
+  exportCtx.imageSmoothingEnabled = false
+  exportCtx.drawImage(gridCanvas, 0, 0, exportSize, exportSize)
+  return exportCanvas.toDataURL("image/png")
 }
 
 function loadColorHistory() {
@@ -608,7 +662,7 @@ async function handleGenerateClick() {
       method: "POST",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt, size: "1024x1024" }),
+      body: JSON.stringify({ prompt, size: "1024x1024", gridSize }),
       signal: controller.signal,
     })
     clearTimeout(timeoutId)

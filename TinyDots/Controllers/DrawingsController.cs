@@ -150,10 +150,14 @@ namespace TinyDots.Controllers
                 ? "1024x1024"
                 : request.Size;
 
+            var gridSize = request.GridSize.HasValue && request.GridSize.Value > 0
+                ? request.GridSize.Value
+                : 128;
+
             var payload = new
             {
                 model = "gpt-image-1.5",
-                prompt = request.Prompt,
+                prompt = $"Pixel art, {gridSize}x{gridSize} sprite, limited palette, crisp pixels, full-bleed, no empty border, no transparent padding. {request.Prompt}",
                 size = requestedSize
             };
 
