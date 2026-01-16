@@ -3,8 +3,8 @@
 TinyDots is a pixel art playground built with ASP.NET Core. It lets you draw, save, and generate pixel art, then export it as a PNG.
 
 <div style="display:flex; gap:16px;">
-  <img src="wwwroot/lib/plane.png" alt="Image 1" width="300" />
-  <img src="wwwroot/lib/moon.png" alt="Image 2" width="300" />
+  <img src="TinyDots/wwwroot/lib/plane.png" alt="Image 1" width="300" />
+  <img src="TinyDots/wwwroot/lib/moon.png" alt="Image 2" width="300" />
 </div>
 
 ## Features
