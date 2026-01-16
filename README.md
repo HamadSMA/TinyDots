@@ -21,13 +21,20 @@ TinyDots is a pixel art playground built with ASP.NET Core. It lets you draw, sa
 ## Getting Started
 
 1. Restore and run the app:
-   ```bash
-   dotnet run
-   ```
+
+```bash
+cd TinyDots
+```
+
+```bash
+dotnet run
+```
+
 2. Open the app:
-   ```
-   http://localhost:xxxx
-   ```
+
+```bash
+http://localhost:xxxx
+```
 
 ## Environment Variables
 
