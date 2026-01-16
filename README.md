@@ -16,7 +16,7 @@ TinyDots is a pixel art playground built with ASP.NET Core. It lets you draw, sa
 
 ## Requirements
 
-- .NET SDK (check `TinyDots.csproj` for the target version)
+.NET SDK (check `TinyDots.csproj` for the target version)
 
 ## Getting Started
 
