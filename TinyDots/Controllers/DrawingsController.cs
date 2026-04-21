@@ -47,54 +47,46 @@ namespace TinyDots.Controllers
         }
 
         // =========================
-        // SAVE (CREATE / UPDATE)
+        // CREATE
         // =========================
-        [HttpPost]
-        public IActionResult Save([FromBody] SaveDrawingRequest request)
+        [HttpPost("/Drawings")]
+        public IActionResult Create([FromBody] SaveDrawingRequest request)
         {
-            // 🔒 HARD GUARD — NO USER, NO SAVE
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            if (userId == null) return Unauthorized("UserId missing");
+            if (request == null) return BadRequest("Request body missing");
+            if (string.IsNullOrWhiteSpace(request.PixelData)) return BadRequest("PixelData missing");
+
+            var drawing = new Drawing
             {
-                return Unauthorized("UserId missing");
-            }
+                PixelData = request.PixelData,
+                CreatedAt = DateTime.UtcNow,
+                UserId = userId
+            };
 
-            if (request == null)
-            {
-                return BadRequest("Request body missing");
-            }
+            _context.Drawings.Add(drawing);
+            _context.SaveChanges();
 
-            if (string.IsNullOrWhiteSpace(request.PixelData))
-            {
-                return BadRequest("PixelData missing");
-            }
+            return Json(new { id = drawing.Id });
+        }
 
-            Drawing drawing;
+        // =========================
+        // UPDATE
+        // =========================
+        [HttpPut("/Drawings/{id}")]
+        public IActionResult Update(int id, [FromBody] SaveDrawingRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized("UserId missing");
+            if (request == null) return BadRequest("Request body missing");
+            if (string.IsNullOrWhiteSpace(request.PixelData)) return BadRequest("PixelData missing");
 
-            if (request.Id.HasValue)
-            {
-                drawing = _context.Drawings
-                    .FirstOrDefault(d => d.Id == request.Id.Value && d.UserId == userId);
+            var drawing = _context.Drawings
+                .FirstOrDefault(d => d.Id == id && d.UserId == userId);
 
-                if (drawing == null)
-                {
-                    return NotFound();
-                }
+            if (drawing == null) return NotFound();
 
-                drawing.PixelData = request.PixelData;
-            }
-            else
-            {
-                drawing = new Drawing
-                {
-                    PixelData = request.PixelData,
-                    CreatedAt = DateTime.UtcNow,
-                    UserId = userId
-                };
-
-                _context.Drawings.Add(drawing);
-            }
-
+            drawing.PixelData = request.PixelData;
             _context.SaveChanges();
 
             return Json(new { id = drawing.Id });
@@ -103,22 +95,16 @@ namespace TinyDots.Controllers
         // =========================
         // DELETE
         // =========================
-        [HttpPost]
-        public IActionResult DeleteAjax([FromBody] int id)
+        [HttpDelete("/Drawings/{id}")]
+        public IActionResult Delete(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
+            if (userId == null) return Unauthorized();
 
             var drawing = _context.Drawings
                 .FirstOrDefault(d => d.Id == id && d.UserId == userId);
 
-            if (drawing == null)
-            {
-                return NotFound();
-            }
+            if (drawing == null) return NotFound();
 
             _context.Drawings.Remove(drawing);
             _context.SaveChanges();

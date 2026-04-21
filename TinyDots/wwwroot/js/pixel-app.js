@@ -439,11 +439,9 @@ async function deleteDrawing(id, li) {
   const shouldDelete = confirm("Delete this drawing?")
   if (!shouldDelete) return
 
-  const response = await fetch("/Drawings/DeleteAjax", {
-    method: "POST",
+  const response = await fetch(`/Drawings/${id}`, {
+    method: "DELETE",
     credentials: "same-origin",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(Number(id)),
   })
 
   if (!response.ok) {
@@ -713,14 +711,12 @@ document.addEventListener("click", (e) => {
 // Save
 // =======================
 saveBtn.onclick = async () => {
-  const response = await fetch("/Drawings/Save", {
-    method: "POST",
+  const isUpdate = activeDrawingId != null
+  const response = await fetch(isUpdate ? `/Drawings/${activeDrawingId}` : "/Drawings", {
+    method: isUpdate ? "PUT" : "POST",
     credentials: "same-origin",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: activeDrawingId,
-      pixelData: JSON.stringify(pixels),
-    }),
+    body: JSON.stringify({ pixelData: JSON.stringify(pixels) }),
   })
 
   if (!response.ok) {
