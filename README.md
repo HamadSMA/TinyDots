@@ -24,7 +24,7 @@ TinyDots is a pixel art playground built with ASP.NET Core. Draw on a grid canva
 | Database | MySQL via Entity Framework Core (Pomelo) |
 | Auth | ASP.NET Core Identity |
 | Frontend | Vanilla JS + HTML5 Canvas + CSS |
-| AI | OpenAI API (`gpt-image-1`) |
+| AI | OpenAI API (`gpt-image-1.5`) |
 
 ## Requirements
 
@@ -92,9 +92,10 @@ TinyDots/
 
 | Method | Path | Description |
 |---|---|---|
-| `GET` | `/Drawings/Index` | Main editor with gallery |
-| `POST` | `/Drawings/Save` | Save or update a drawing |
-| `POST` | `/Drawings/DeleteAjax` | Delete a drawing by ID |
+| `GET` | `/Drawings` | Main editor with gallery |
+| `POST` | `/Drawings` | Create a new drawing |
+| `PUT` | `/Drawings/{id}` | Update an existing drawing |
+| `DELETE` | `/Drawings/{id}` | Delete a drawing |
 | `POST` | `/Drawings/GenerateImage` | Generate pixel art from a text prompt |
 
 ## Notes
